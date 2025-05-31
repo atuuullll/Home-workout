@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apiConfig>
+    <api>
+        <name>Google Custom Search</name>
+        <baseUrl>https://www.googleapis.com/customsearch/v1</baseUrl>
+        <parameters>
+            <parameter>
+                <name>key</name>
+                <value>YOUR_API_KEY</value>
+            </parameter>
+            <parameter>
+                <name>cx</name>
+                <value>e71e99d1548c849f4</value>
+            </parameter>
+        </parameters>
+    </api>
+</apiConfig>

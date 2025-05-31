@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Homeworkout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-black min-h-screen flex items-center justify-center">
+    <div class="bg-[#06402B]/20 p-8 rounded-lg shadow-xl w-full max-w-md">
+        <!-- Logo and Title -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-dumbbell text-3xl text-[#06402B]"></i>
+                <h1 class="text-3xl font-bold text-white">Homeworkout</h1>
+            </div>
+            <h2 class="text-2xl font-semibold text-white">Welcome Back!</h2>
+            <p class="text-gray-400 mt-2">Please login to your account</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-envelope text-gray-400"></i>
+                    </span>
+                    <input type="email" id="email" name="email" required
+                        class="w-full pl-10 pr-4 py-2 rounded-lg bg-black border border-gray-700 text-white focus:ring-2 focus:ring-[#06402B] focus:border-[#06402B]"
+                        placeholder="Enter your email">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </span>
+                    <input type="password" id="password" name="password" required
+                        class="w-full pl-10 pr-4 py-2 rounded-lg bg-black border border-gray-700 text-white focus:ring-2 focus:ring-[#06402B] focus:border-[#06402B]"
+                        placeholder="Enter your password">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" name="remember"
+                        class="h-4 w-4 rounded border-gray-700 bg-black text-[#06402B] focus:ring-[#06402B]">
+                    <label for="remember" class="ml-2 block text-sm text-gray-300">Remember me</label>
+                </div>
+                <a href="#" class="text-sm text-[#06402B] hover:text-[#06402B]/80">Forgot password?</a>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-[#06402B] text-white py-2 px-4 rounded-lg hover:bg-[#06402B]/90 transition duration-300">
+                Login
+            </button>
+        </form>
+
+        <!-- Sign Up Link -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-400">
+                Don't have an account?
+                <a href="signup.html" class="text-[#06402B] hover:text-[#06402B]/80 font-medium">Sign up</a>
+            </p>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="mt-6 text-center">
+            <a href="index.html" class="text-gray-400 hover:text-white transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>
