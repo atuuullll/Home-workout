@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Homeworkout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-black text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-[#06402B] text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-dumbbell text-2xl"></i>
+                <h1 class="text-2xl font-bold">Homeworkout</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="hover:text-gray-300 transition">Home</a>
+                <a href="index.html#workouts" class="hover:text-gray-300 transition">Workouts</a>
+                <a href="index.html#progress" class="hover:text-gray-300 transition">Progress</a>
+                <a href="profile.html" class="hover:text-gray-300 transition">Profile</a>
+                <a href="login.html" class="hover:text-gray-300 transition">Login</a>
+                <a href="signup.html" class="hover:text-gray-300 transition">Sign Up</a>
+            </div>
+            <button class="md:hidden text-xl" id="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden bg-[#06402B] px-4 py-2" id="mobile-menu">
+            <a href="index.html" class="block py-2 hover:text-gray-300 transition">Home</a>
+            <a href="index.html#workouts" class="block py-2 hover:text-gray-300 transition">Workouts</a>
+            <a href="index.html#progress" class="block py-2 hover:text-gray-300 transition">Progress</a>
+            <a href="profile.html" class="block py-2 hover:text-gray-300 transition">Profile</a>
+            <a href="login.html" class="block py-2 hover:text-gray-300 transition">Login</a>
+            <a href="signup.html" class="block py-2 hover:text-gray-300 transition">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="py-12 bg-black text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Your Profile</h2>
+            <div class="max-w-md mx-auto bg-[#06402B]/20 rounded-lg p-6 shadow-md">
+                <div class="text-center mb-6">
+                    <i class="fas fa-user-circle text-6xl text-[#06402B] mb-4"></i>
+                    <h3 class="text-xl font-semibold" id="user-name">Demo User</h3>
+                    <p class="text-gray-400" id="user-email">demo@example.com</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span>Total Workouts:</span>
+                        <span id="profile-total-workouts">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Completed Exercises:</span>
+                        <span id="profile-completed-exercises">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Current Streak:</span>
+                        <span id="profile-streak">0 days</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Member Since:</span>
+                        <span id="profile-member-since">Today</span>
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <button class="bg-[#06402B] text-white px-6 py-2 rounded-lg hover:bg-[#06402B]/90 transition">
+                        <i class="fas fa-edit mr-2"></i> Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js" type="module"></script>
+
+    <script>
+        // Load profile data
+        document.addEventListener('DOMContentLoaded', async () => {
+            const db = firebase.firestore();
+            let uid = 'demo-user';
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    uid = user.uid;
+                    document.getElementById('user-name').textContent = user.displayName || 'User';
+                    document.getElementById('user-email').textContent = user.email;
+                }
+                try {
+                    const doc = await db.collection('users').doc(uid).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const workouts = data.workouts || [];
+                        const totalWorkouts = workouts.length;
+                        const completedExercises = workouts.filter(w => w.completed).length;
+                        document.getElementById('profile-total-workouts').textContent = totalWorkouts;
+                        document.getElementById('profile-completed-exercises').textContent = completedExercises;
+                        // Dummy streak and member since
+                        document.getElementById('profile-streak').textContent = '1 day';
+                        document.getElementById('profile-member-since').textContent = new Date().toLocaleDateString();
+                    }
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -50,6 +50,7 @@
                 <a href="#home" class="hover:text-gray-300 transition">Home</a>
                 <a href="#workouts" class="hover:text-gray-300 transition">Workouts</a>
                 <a href="#progress" class="hover:text-gray-300 transition">Progress</a>
+                <a href="profile.html" class="hover:text-gray-300 transition">Profile</a>
                 <a href="login.html" class="hover:text-gray-300 transition">Login</a>
                 <a href="signup.html" class="hover:text-gray-300 transition">Sign Up</a>
             </div>
@@ -62,6 +63,7 @@
             <a href="#home" class="block py-2 hover:text-gray-300 transition">Home</a>
             <a href="#workouts" class="block py-2 hover:text-gray-300 transition">Workouts</a>
             <a href="#progress" class="block py-2 hover:text-gray-300 transition">Progress</a>
+            <a href="profile.html" class="block py-2 hover:text-gray-300 transition">Profile</a>
             <a href="login.html" class="block py-2 hover:text-gray-300 transition">Login</a>
             <a href="signup.html" class="block py-2 hover:text-gray-300 transition">Sign Up</a>
         </div>
@@ -121,6 +123,113 @@
                         </button>
                     </div>
                 </form>
+
+                <script>
+                    // Define variables and functions inline to prevent page refresh
+                    let workouts = [];
+                    let currentUid = null;
+                    const db = firebase.firestore();
+
+                    // Get current user UID
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            currentUid = user.uid;
+                            loadWorkouts(currentUid);
+                        } else {
+                            currentUid = 'demo-user';
+                            loadWorkouts(currentUid);
+                        }
+                    });
+
+                    function addExerciseToUI(exercise) {
+                        const container = document.getElementById('workout-container');
+                        const card = document.createElement('div');
+                        card.className = 'bg-[#06402B]/20 rounded-lg p-4 shadow-md';
+                        card.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-2 text-white">${exercise.name}</h3>
+                            <p class="text-gray-300 mb-2">Sets: ${exercise.sets} | Reps: ${exercise.reps}</p>
+                            <button class="mark-complete bg-[#06402B] text-white px-4 py-2 rounded-lg hover:bg-[#06402B]/90 transition" data-index="${workouts.length - 1}">
+                                ${exercise.completed ? 'Completed' : 'Mark Complete'}
+                            </button>
+                        `;
+                        container.appendChild(card);
+
+                        // Add event listener to the button
+                        const button = card.querySelector('.mark-complete');
+                        button.addEventListener('click', () => {
+                            const index = parseInt(button.getAttribute('data-index'));
+                            workouts[index].completed = !workouts[index].completed;
+                            button.textContent = workouts[index].completed ? 'Completed' : 'Mark Complete';
+                            updateProgress();
+                            saveWorkouts(currentUid, workouts);
+                        });
+                    }
+
+                    function updateProgress() {
+                        const total = workouts.length;
+                        const completed = workouts.filter(w => w.completed).length;
+                        document.getElementById('total-count').textContent = total;
+                        document.getElementById('completed-count').textContent = completed;
+                        const percent = total > 0 ? (completed / total) * 100 : 0;
+                        document.getElementById('progress-bar').style.width = `${percent}%`;
+                    }
+
+                    async function saveWorkouts(uid, workouts) {
+                        try {
+                            await db.collection('users').doc(uid).set({ workouts }, { merge: true });
+                            console.log('Workouts saved to Firestore successfully');
+                        } catch (error) {
+                            console.error('Error saving workouts:', error);
+                        }
+                    }
+
+                    async function loadWorkouts(uid) {
+                        try {
+                            const doc = await db.collection('users').doc(uid).get();
+                            if (doc.exists) {
+                                workouts = doc.data().workouts || [];
+                                const container = document.getElementById('workout-container');
+                                container.innerHTML = '';
+                                workouts.forEach(addExerciseToUI);
+                                updateProgress();
+                                console.log('Workouts loaded from Firestore successfully');
+                            } else {
+                                workouts = [];
+                                const container = document.getElementById('workout-container');
+                                container.innerHTML = '';
+                                updateProgress();
+                                console.log('No workouts found in Firestore');
+                            }
+                        } catch (error) {
+                            console.error('Error loading workouts:', error);
+                        }
+                    }
+
+                    // Attach form listener immediately to prevent page refresh
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const form = document.getElementById('workout-form');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                const name = document.getElementById('exercise-name').value;
+                                const sets = parseInt(document.getElementById('exercise-sets').value);
+                                const reps = parseInt(document.getElementById('exercise-reps').value);
+                                if (name && sets && reps) {
+                                    // Add to workouts array
+                                    workouts.push({ name, sets, reps, completed: false });
+                                    // Add to UI
+                                    addExerciseToUI(workouts[workouts.length - 1]);
+                                    // Save
+                                    saveWorkouts(currentUid, workouts);
+                                    // Update progress
+                                    updateProgress();
+                                    // Clear form
+                                    form.reset();
+                                }
+                            });
+                        }
+                    });
+                </script>
             </div>
 
             <div class="flex justify-between items-center">
@@ -243,10 +352,14 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/firebase-config.js" type="module"></script>
+
+    <!-- Google Cloud Storage SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@google-cloud/storage"></script>
 
     <!-- Your custom JS files -->
+    <script src="js/gcs-config.js" type="module"></script>
+    <script src="js/storage-service.js" type="module"></script>
     <script src="js/app.js" type="module"></script>
 
     <!-- Server Information -->
