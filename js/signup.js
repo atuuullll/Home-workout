@@ -1,24 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const signupForm = document.getElementById('signupForm');
+    const signupForm = document.getElementById('signupForm') || document.getElementById('signup-form');
     const fullNameInput = document.getElementById('fullName');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword') || document.getElementById('confirm-password');
     const termsCheckbox = document.getElementById('terms');
 
-    // Function to show error message
-    function showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'mt-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-500 text-sm text-center';
-        errorDiv.textContent = message;
+    if (!signupForm || !emailInput || !passwordInput || !confirmPasswordInput) return;
 
-        // Remove any existing error message
-        const existingError = signupForm.querySelector('.bg-red-500\\/20');
-        if (existingError) {
-            existingError.remove();
-        }
+    function showMessage(message, type = 'error') {
+        signupForm.querySelectorAll('[data-auth-message]').forEach((element) => element.remove());
 
-        signupForm.insertBefore(errorDiv, signupForm.firstChild);
+        const messageDiv = document.createElement('div');
+        messageDiv.dataset.authMessage = 'true';
+        messageDiv.className = type === 'success'
+            ? 'mb-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-200 text-sm text-center'
+            : 'mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200 text-sm text-center';
+        messageDiv.textContent = message;
+        signupForm.insertBefore(messageDiv, signupForm.firstChild);
     }
 
     // Function to validate email format
@@ -35,74 +34,72 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const fullName = fullNameInput.value.trim();
+        const fullName = fullNameInput?.value.trim() || '';
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
         // Validation
-        if (!fullName) {
-            showError('Please enter your full name');
+        if (fullNameInput && !fullName) {
+            showMessage('Please enter your full name');
             return;
         }
 
         if (!isValidEmail(email)) {
-            showError('Please enter a valid email address');
+            showMessage('Please enter a valid email address');
             return;
         }
 
         if (!isStrongPassword(password)) {
-            showError('Password must be at least 6 characters long');
+            showMessage('Password must be at least 6 characters long');
             return;
         }
 
         if (password !== confirmPassword) {
-            showError('Passwords do not match');
+            showMessage('Passwords do not match');
             return;
         }
 
-        if (!termsCheckbox.checked) {
-            showError('Please agree to the Terms of Service and Privacy Policy');
+        if (termsCheckbox && !termsCheckbox.checked) {
+            showMessage('Please agree to the Terms of Service and Privacy Policy');
             return;
         }
+
+        const submitButton = signupForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
 
         try {
             // Show loading state
-            const submitButton = signupForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Account...';
             submitButton.disabled = true;
 
             // Check if Firebase is initialized
-            if (!firebase.apps.length) {
-                throw new Error('Firebase is not initialized');
+            if (!window.firebase?.auth || !firebase.apps.length) {
+                throw new Error('Firebase is not initialized.');
             }
 
             // Create user with Firebase
             const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             
             // Update user profile with full name
-            await userCredential.user.updateProfile({
-                displayName: fullName
-            });
+            if (fullName) {
+                await userCredential.user.updateProfile({
+                    displayName: fullName
+                });
+            }
 
             // Send email verification
-            await userCredential.user.sendEmailVerification();
+            if (userCredential.user.sendEmailVerification) {
+                await userCredential.user.sendEmailVerification();
+            }
 
             // Show success message
-            const successDiv = document.createElement('div');
-            successDiv.className = 'mt-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-500 text-sm text-center';
-            successDiv.innerHTML = `
-                Account created successfully!<br>
-                Please check your email to verify your account.<br>
-                Redirecting to the website...
-            `;
-            signupForm.insertBefore(successDiv, signupForm.firstChild);
+            showMessage('Account created successfully. Redirecting...', 'success');
 
             // Redirect to main website after 2 seconds
             setTimeout(() => {
-                window.location.replace('/index.html');
-            }, 2000);
+                window.location.replace('index.html');
+            }, 900);
 
         } catch (error) {
             console.error('Signup error:', error);
@@ -127,13 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorMessage = 'Network error. Please check your internet connection.';
                     break;
                 default:
-                    errorMessage = `Error: ${error.message}`;
+                    errorMessage = error.message || 'An error occurred during signup.';
             }
 
-            showError(errorMessage);
+            showMessage(errorMessage);
 
             // Reset button
-            const submitButton = signupForm.querySelector('button[type="submit"]');
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
         }

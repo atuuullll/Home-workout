@@ -8,105 +8,476 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-black text-white min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-[#06402B] text-white shadow-lg">
+    <nav class="bg-[#06402B] text-white shadow-lg sticky top-0 z-20">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
+            <a href="index.html" class="flex items-center space-x-2">
                 <i class="fas fa-dumbbell text-2xl"></i>
-                <h1 class="text-2xl font-bold">Homeworkout</h1>
-            </div>
+                <span class="text-2xl font-bold">Homeworkout</span>
+            </a>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="hover:text-gray-300 transition">Home</a>
-                <a href="index.html#workouts" class="hover:text-gray-300 transition">Workouts</a>
-                <a href="index.html#progress" class="hover:text-gray-300 transition">Progress</a>
-                <a href="profile.html" class="hover:text-gray-300 transition">Profile</a>
-                <a href="login.html" class="hover:text-gray-300 transition">Login</a>
-                <a href="signup.html" class="hover:text-gray-300 transition">Sign Up</a>
+                <a href="index.html" class="hover:text-gray-300 transition">Dashboard</a>
+                <span class="text-gray-200 hidden" data-auth-user data-user-email>Profile</span>
+                <a href="login.html" class="hover:text-gray-300 transition" data-auth-guest>Login</a>
+                <a href="signup.html" class="hover:text-gray-300 transition" data-auth-guest>Sign Up</a>
+                <button type="button" class="hover:text-gray-300 transition hidden" data-auth-user data-logout-button>Logout</button>
             </div>
-            <button class="md:hidden text-xl" id="mobile-menu-button">
+            <button class="md:hidden text-xl" id="mobile-menu-button" aria-label="Open menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-        <!-- Mobile menu -->
         <div class="md:hidden hidden bg-[#06402B] px-4 py-2" id="mobile-menu">
-            <a href="index.html" class="block py-2 hover:text-gray-300 transition">Home</a>
-            <a href="index.html#workouts" class="block py-2 hover:text-gray-300 transition">Workouts</a>
-            <a href="index.html#progress" class="block py-2 hover:text-gray-300 transition">Progress</a>
-            <a href="profile.html" class="block py-2 hover:text-gray-300 transition">Profile</a>
-            <a href="login.html" class="block py-2 hover:text-gray-300 transition">Login</a>
-            <a href="signup.html" class="block py-2 hover:text-gray-300 transition">Sign Up</a>
+            <a href="index.html" class="block py-2 hover:text-gray-300 transition">Dashboard</a>
+            <span class="block py-2 text-gray-200 hidden" data-auth-user data-user-email>Profile</span>
+            <a href="login.html" class="block py-2 hover:text-gray-300 transition" data-auth-guest>Login</a>
+            <a href="signup.html" class="block py-2 hover:text-gray-300 transition" data-auth-guest>Sign Up</a>
+            <button type="button" class="block py-2 hover:text-gray-300 transition hidden" data-auth-user data-logout-button>Logout</button>
         </div>
     </nav>
 
-    <!-- Profile Section -->
-    <section class="py-12 bg-black text-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-8">Your Profile</h2>
-            <div class="max-w-md mx-auto bg-[#06402B]/20 rounded-lg p-6 shadow-md">
-                <div class="text-center mb-6">
-                    <i class="fas fa-user-circle text-6xl text-[#06402B] mb-4"></i>
-                    <h3 class="text-xl font-semibold" id="user-name">Demo User</h3>
-                    <p class="text-gray-400" id="user-email">demo@example.com</p>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex justify-between">
-                        <span>Total Workouts:</span>
-                        <span id="profile-total-workouts">0</span>
+    <main>
+        <section class="bg-gradient-to-r from-black via-[#031f15] to-[#06402B] py-10 md:py-14">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 items-stretch">
+                    <div class="bg-black/45 border border-[#0c6b48] rounded-lg p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+                            <div class="w-24 h-24 rounded-full bg-[#06402B] flex items-center justify-center border-4 border-white/10 shrink-0">
+                                <i class="fas fa-user text-4xl text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm uppercase tracking-widest text-gray-300">Gym Member Profile</p>
+                                <h1 class="text-3xl md:text-5xl font-bold mt-2" id="user-name">Member Name</h1>
+                                <p class="text-gray-300 mt-2" id="user-email">Add your email</p>
+                                <div class="flex flex-wrap gap-3 mt-5">
+                                    <span class="inline-flex items-center gap-2 bg-[#06402B] px-4 py-2 rounded-lg text-sm font-semibold">
+                                        <i class="fas fa-medal"></i>
+                                        <span id="member-level">Active Member</span>
+                                    </span>
+                                    <span class="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg text-sm">
+                                        <i class="fas fa-calendar-check"></i>
+                                        Joined <span id="profile-member-since">Today</span>
+                                    </span>
+                                </div>
+                                <button id="edit-profile-button" class="inline-flex items-center gap-2 mt-5 bg-white text-[#06402B] px-5 py-3 rounded-lg font-bold hover:bg-gray-200 transition">
+                                    <i class="fas fa-pen"></i>
+                                    Edit Profile
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Completed Exercises:</span>
-                        <span id="profile-completed-exercises">0</span>
+
+                    <div class="bg-[#06402B]/25 border border-[#0c6b48] rounded-lg p-6">
+                        <p class="text-sm uppercase tracking-widest text-gray-300">Today</p>
+                        <h2 class="text-2xl font-bold mt-2" id="today-date">Workout Day</h2>
+                        <div class="mt-6">
+                            <div class="flex justify-between text-sm text-gray-300 mb-2">
+                                <span>Daily Completion</span>
+                                <span id="completion-percent">0%</span>
+                            </div>
+                            <div class="w-full bg-black rounded-full h-4 overflow-hidden">
+                                <div id="completion-bar" class="bg-white h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <a href="index.html#workouts" class="inline-flex items-center gap-2 mt-6 bg-white text-[#06402B] px-5 py-3 rounded-lg font-bold hover:bg-gray-200 transition">
+                            <i class="fas fa-plus"></i>
+                            Add Workout
+                        </a>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Current Streak:</span>
-                        <span id="profile-streak">0 days</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Member Since:</span>
-                        <span id="profile-member-since">Today</span>
-                    </div>
-                </div>
-                <div class="mt-6 text-center">
-                    <button class="bg-[#06402B] text-white px-6 py-2 rounded-lg hover:bg-[#06402B]/90 transition">
-                        <i class="fas fa-edit mr-2"></i> Edit Profile
-                    </button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Firebase SDKs -->
+        <section class="py-10 bg-black">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-gray-300">Total Exercises</p>
+                            <i class="fas fa-dumbbell text-[#0c6b48] text-xl"></i>
+                        </div>
+                        <p class="text-4xl font-bold mt-4" id="profile-total-workouts">0</p>
+                    </div>
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-gray-300">Completed</p>
+                            <i class="fas fa-circle-check text-[#0c6b48] text-xl"></i>
+                        </div>
+                        <p class="text-4xl font-bold mt-4" id="profile-completed-exercises">0</p>
+                    </div>
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-gray-300">Total Sets</p>
+                            <i class="fas fa-layer-group text-[#0c6b48] text-xl"></i>
+                        </div>
+                        <p class="text-4xl font-bold mt-4" id="profile-total-sets">0</p>
+                    </div>
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-gray-300">Total Reps</p>
+                            <i class="fas fa-repeat text-[#0c6b48] text-xl"></i>
+                        </div>
+                        <p class="text-4xl font-bold mt-4" id="profile-total-reps">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-12 bg-black">
+            <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-6">
+                <aside class="space-y-6">
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-5">Member Details</h2>
+                        <div class="space-y-4 text-sm">
+                            <div class="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                <span class="text-gray-400">Account Status</span>
+                                <span class="font-semibold text-right" id="account-status">Guest Mode</span>
+                            </div>
+                            <div class="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                <span class="text-gray-400">User ID</span>
+                                <span class="font-semibold text-right break-all" id="profile-user-id">Guest profile</span>
+                            </div>
+                            <div class="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                <span class="text-gray-400">Current Streak</span>
+                                <span class="font-semibold text-right" id="profile-streak">0 days</span>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <span class="text-gray-400">Last Updated</span>
+                                <span class="font-semibold text-right" id="last-updated">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-5">Fitness Goals</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-300">Daily exercises</span>
+                                    <span id="daily-goal-label">0 / 5</span>
+                                </div>
+                                <div class="w-full bg-black rounded-full h-3 overflow-hidden">
+                                    <div id="daily-goal-bar" class="bg-[#0c6b48] h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-300">Completion goal</span>
+                                    <span id="completion-goal-label">0 / 80%</span>
+                                </div>
+                                <div class="w-full bg-black rounded-full h-3 overflow-hidden">
+                                    <div id="completion-goal-bar" class="bg-white h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="space-y-6">
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                            <div>
+                                <h2 class="text-xl font-bold">Workout Summary</h2>
+                                <p class="text-gray-400 text-sm mt-1">Exercises saved from your workout planner</p>
+                            </div>
+                            <a href="index.html#progress" class="inline-flex items-center gap-2 text-sm bg-[#06402B] px-4 py-2 rounded-lg hover:bg-[#07583b] transition">
+                                <i class="fas fa-chart-line"></i>
+                                Progress
+                            </a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left min-w-[520px]">
+                                <thead class="text-xs uppercase text-gray-400 border-b border-white/10">
+                                    <tr>
+                                        <th class="py-3 pr-4">Exercise</th>
+                                        <th class="py-3 pr-4">Sets</th>
+                                        <th class="py-3 pr-4">Reps</th>
+                                        <th class="py-3 pr-4">Volume</th>
+                                        <th class="py-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="workout-table" class="divide-y divide-white/10"></tbody>
+                            </table>
+                        </div>
+                        <div id="empty-workouts" class="hidden text-center py-10 text-gray-400">
+                            <i class="fas fa-clipboard-list text-4xl mb-3"></i>
+                            <p>No workout data yet. Add exercises from the dashboard to fill this profile.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#06402B]/20 border border-[#0c6b48]/70 rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-5">Recent Activity</h2>
+                        <div id="activity-list" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="edit-profile-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-30 px-4">
+        <div class="bg-[#031f15] border border-[#0c6b48] rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-2xl font-bold">Edit Profile</h2>
+                <button id="close-profile-modal" class="w-10 h-10 rounded-lg bg-black/50 hover:bg-black transition" aria-label="Close edit profile">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <form id="edit-profile-form" class="space-y-4">
+                <div>
+                    <label for="edit-name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                    <input type="text" id="edit-name" class="w-full px-4 py-3 rounded-lg border border-[#0c6b48] bg-black text-white focus:ring-2 focus:ring-white focus:border-white" placeholder="Enter your name" required>
+                </div>
+                <div>
+                    <label for="edit-email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" id="edit-email" class="w-full px-4 py-3 rounded-lg border border-[#0c6b48] bg-black text-white focus:ring-2 focus:ring-white focus:border-white" placeholder="Enter your email" required>
+                </div>
+                <p id="edit-profile-message" class="hidden text-sm"></p>
+                <button type="submit" class="w-full bg-white text-[#06402B] py-3 rounded-lg font-bold hover:bg-gray-200 transition">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="js/firebase-config.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth-ui.js"></script>
 
     <script>
-        // Load profile data
-        document.addEventListener('DOMContentLoaded', async () => {
-            const db = firebase.firestore();
-            let uid = 'demo-user';
-            firebase.auth().onAuthStateChanged(async (user) => {
-                if (user) {
-                    uid = user.uid;
-                    document.getElementById('user-name').textContent = user.displayName || 'User';
-                    document.getElementById('user-email').textContent = user.email;
-                }
+        let currentUser = null;
+        let currentWorkouts = [];
+
+        const formatDate = (date) => date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+
+        function getLocalWorkouts() {
+            try {
+                return JSON.parse(localStorage.getItem('workouts')) || [];
+            } catch (error) {
+                console.error('Error reading local workouts:', error);
+                return [];
+            }
+        }
+
+        function getSavedProfile() {
+            try {
+                return JSON.parse(localStorage.getItem('profileInfo')) || {};
+            } catch (error) {
+                console.error('Error reading profile information:', error);
+                return {};
+            }
+        }
+
+        function saveProfile(profile) {
+            localStorage.setItem('profileInfo', JSON.stringify(profile));
+        }
+
+        function setText(id, value) {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderProfile(user, workouts) {
+            const savedProfile = getSavedProfile();
+            const profileName = savedProfile.name || user?.displayName || 'Member Name';
+            const profileEmail = savedProfile.email || user?.email || 'Add your email';
+            const total = workouts.length;
+            const completed = workouts.filter(workout => workout.completed).length;
+            const totalSets = workouts.reduce((sum, workout) => sum + (Number(workout.sets) || 0), 0);
+            const totalReps = workouts.reduce((sum, workout) => sum + ((Number(workout.sets) || 0) * (Number(workout.reps) || 0)), 0);
+            const completion = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const dailyGoal = Math.min(Math.round((total / 5) * 100), 100);
+            const completionGoal = Math.min(Math.round((completion / 80) * 100), 100);
+
+            setText('user-name', profileName);
+            setText('user-email', profileEmail);
+            setText('account-status', user ? 'Signed In' : 'Guest Mode');
+            setText('profile-user-id', user?.uid || 'Guest profile');
+            setText('profile-member-since', user?.metadata?.creationTime ? formatDate(new Date(user.metadata.creationTime)) : formatDate(new Date()));
+            setText('today-date', new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+            setText('last-updated', new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }));
+            setText('member-level', completion >= 80 ? 'Elite Member' : completed > 0 ? 'Active Member' : 'New Member');
+            setText('profile-total-workouts', total);
+            setText('profile-completed-exercises', completed);
+            setText('profile-total-sets', totalSets);
+            setText('profile-total-reps', totalReps);
+            setText('profile-streak', completed > 0 ? '1 day' : '0 days');
+            setText('completion-percent', `${completion}%`);
+            setText('daily-goal-label', `${total} / 5`);
+            setText('completion-goal-label', `${completion}% / 80%`);
+
+            document.getElementById('completion-bar').style.width = `${completion}%`;
+            document.getElementById('daily-goal-bar').style.width = `${dailyGoal}%`;
+            document.getElementById('completion-goal-bar').style.width = `${completionGoal}%`;
+
+            renderWorkoutTable(workouts);
+            renderActivity(workouts);
+        }
+
+        function renderWorkoutTable(workouts) {
+            const table = document.getElementById('workout-table');
+            const emptyState = document.getElementById('empty-workouts');
+            table.innerHTML = '';
+
+            if (!workouts.length) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            workouts.forEach((workout) => {
+                const name = escapeHtml(workout.name || 'Exercise');
+                const sets = Number(workout.sets) || 0;
+                const reps = Number(workout.reps) || 0;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-4 pr-4 font-semibold">${name}</td>
+                    <td class="py-4 pr-4 text-gray-300">${sets}</td>
+                    <td class="py-4 pr-4 text-gray-300">${reps}</td>
+                    <td class="py-4 pr-4 text-gray-300">${sets * reps} reps</td>
+                    <td class="py-4">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold ${workout.completed ? 'bg-green-500/20 text-green-300' : 'bg-yellow-500/20 text-yellow-300'}">
+                            <i class="fas ${workout.completed ? 'fa-check' : 'fa-clock'}"></i>
+                            ${workout.completed ? 'Complete' : 'Pending'}
+                        </span>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        function renderActivity(workouts) {
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+
+            const activities = workouts.slice(-4).reverse();
+            if (!activities.length) {
+                activityList.innerHTML = '<p class="text-gray-400">Your workout activity will appear here after you add exercises.</p>';
+                return;
+            }
+
+            activities.forEach((workout) => {
+                const name = escapeHtml(workout.name || 'Exercise');
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between gap-4 bg-black/40 rounded-lg p-4';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-lg bg-[#06402B] flex items-center justify-center">
+                            <i class="fas ${workout.completed ? 'fa-check' : 'fa-dumbbell'}"></i>
+                        </span>
+                        <div>
+                            <p class="font-semibold">${name}</p>
+                            <p class="text-sm text-gray-400">${workout.sets || 0} sets x ${workout.reps || 0} reps</p>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-300">${workout.completed ? 'Completed' : 'Planned'}</span>
+                `;
+                activityList.appendChild(item);
+            });
+        }
+
+        async function loadWorkoutsForUser(user) {
+            const localWorkouts = getLocalWorkouts();
+
+            if (!user || !window.firebase?.firestore) {
+                return localWorkouts;
+            }
+
+            try {
+                const doc = await firebase.firestore().collection('users').doc(user.uid).get();
+                const firestoreWorkouts = doc.exists ? (doc.data().workouts || []) : [];
+                return firestoreWorkouts.length ? firestoreWorkouts : localWorkouts;
+            } catch (error) {
+                console.error('Error loading Firestore workouts:', error);
+                return localWorkouts;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+
+            const modal = document.getElementById('edit-profile-modal');
+            const editButton = document.getElementById('edit-profile-button');
+            const closeButton = document.getElementById('close-profile-modal');
+            const form = document.getElementById('edit-profile-form');
+            const message = document.getElementById('edit-profile-message');
+
+            function openEditModal() {
+                const savedProfile = getSavedProfile();
+                document.getElementById('edit-name').value = currentUser?.displayName || savedProfile.name || '';
+                document.getElementById('edit-email').value = currentUser?.email || savedProfile.email || '';
+                message.className = 'hidden text-sm';
+                message.textContent = '';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closeEditModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            editButton.addEventListener('click', openEditModal);
+            closeButton.addEventListener('click', closeEditModal);
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) closeEditModal();
+            });
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const name = document.getElementById('edit-name').value.trim();
+                const email = document.getElementById('edit-email').value.trim();
+
+                if (!name || !email) return;
+
+                saveProfile({ name, email });
+
                 try {
-                    const doc = await db.collection('users').doc(uid).get();
-                    if (doc.exists) {
-                        const data = doc.data();
-                        const workouts = data.workouts || [];
-                        const totalWorkouts = workouts.length;
-                        const completedExercises = workouts.filter(w => w.completed).length;
-                        document.getElementById('profile-total-workouts').textContent = totalWorkouts;
-                        document.getElementById('profile-completed-exercises').textContent = completedExercises;
-                        // Dummy streak and member since
-                        document.getElementById('profile-streak').textContent = '1 day';
-                        document.getElementById('profile-member-since').textContent = new Date().toLocaleDateString();
+                    if (currentUser?.updateProfile) {
+                        await currentUser.updateProfile({ displayName: name });
                     }
+
+                    if (currentUser?.updateEmail && email !== currentUser.email) {
+                        await currentUser.updateEmail(email);
+                    }
+
+                    message.className = 'text-sm text-green-300';
+                    message.textContent = 'Profile updated successfully.';
                 } catch (error) {
-                    console.error('Error loading profile:', error);
+                    console.error('Error updating Firebase profile:', error);
+                    message.className = 'text-sm text-yellow-300';
+                    message.textContent = 'Saved on this device. Sign in again to update your account email.';
                 }
+
+                renderProfile(currentUser, currentWorkouts);
+                setTimeout(closeEditModal, 900);
+            });
+
+            if (!window.firebase?.auth) {
+                currentWorkouts = getLocalWorkouts();
+                renderProfile(null, currentWorkouts);
+                return;
+            }
+
+            firebase.auth().onAuthStateChanged(async (user) => {
+                currentUser = user;
+                currentWorkouts = await loadWorkoutsForUser(user);
+                renderProfile(user, currentWorkouts);
             });
         });
     </script>

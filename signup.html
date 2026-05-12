@@ -13,7 +13,11 @@
             <i class="fas fa-dumbbell text-4xl text-white mb-4"></i>
             <h1 class="text-2xl font-bold">Sign Up for Homeworkout</h1>
         </div>
-        <form id="signup-form">
+        <form id="signupForm">
+            <div class="mb-4">
+                <label for="fullName" class="block text-sm font-medium mb-2">Full Name</label>
+                <input type="text" id="fullName" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
+            </div>
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium mb-2">Email</label>
                 <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
@@ -23,8 +27,12 @@
                 <input type="password" id="password" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
             </div>
             <div class="mb-6">
-                <label for="confirm-password" class="block text-sm font-medium mb-2">Confirm Password</label>
-                <input type="password" id="confirm-password" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
+                <label for="confirmPassword" class="block text-sm font-medium mb-2">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
+            </div>
+            <div class="mb-6 flex items-start gap-3 text-sm">
+                <input type="checkbox" id="terms" class="mt-1" required>
+                <label for="terms">I agree to the Terms of Service and Privacy Policy.</label>
             </div>
             <button type="submit" class="w-full bg-white text-[#06402B] py-2 rounded-lg font-bold hover:bg-gray-200 transition">
                 Sign Up
@@ -38,22 +46,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="js/firebase-config.js" type="module"></script>
-
-    <script>
-        // Simple signup logic (replace with actual Firebase auth)
-        document.getElementById('signup-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-            // For demo, just redirect to index.html
-            window.location.href = 'index.html';
-        });
-    </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/signup.js"></script>
 </body>
 </html>

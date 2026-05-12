@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script async src="https://cse.google.com/cse.js?cx=e71e99d1548c849f4"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <style>
         .gcse-search {
@@ -48,11 +52,10 @@
             </div>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#home" class="hover:text-gray-300 transition">Home</a>
-                <a href="#workouts" class="hover:text-gray-300 transition">Workouts</a>
-                <a href="#progress" class="hover:text-gray-300 transition">Progress</a>
-                <a href="profile.html" class="hover:text-gray-300 transition">Profile</a>
-                <a href="login.html" class="hover:text-gray-300 transition">Login</a>
-                <a href="signup.html" class="hover:text-gray-300 transition">Sign Up</a>
+                <a href="profile.html" class="hover:text-gray-300 transition hidden" data-auth-user>Profile</a>
+                <a href="login.html" class="hover:text-gray-300 transition" data-auth-guest>Login</a>
+                <a href="signup.html" class="hover:text-gray-300 transition" data-auth-guest>Sign Up</a>
+                <button type="button" class="hover:text-gray-300 transition hidden" data-auth-user data-logout-button>Logout</button>
             </div>
             <button class="md:hidden text-xl" id="mobile-menu-button">
                 <i class="fas fa-bars"></i>
@@ -61,11 +64,10 @@
         <!-- Mobile menu -->
         <div class="md:hidden hidden bg-[#06402B] px-4 py-2" id="mobile-menu">
             <a href="#home" class="block py-2 hover:text-gray-300 transition">Home</a>
-            <a href="#workouts" class="block py-2 hover:text-gray-300 transition">Workouts</a>
-            <a href="#progress" class="block py-2 hover:text-gray-300 transition">Progress</a>
-            <a href="profile.html" class="block py-2 hover:text-gray-300 transition">Profile</a>
-            <a href="login.html" class="block py-2 hover:text-gray-300 transition">Login</a>
-            <a href="signup.html" class="block py-2 hover:text-gray-300 transition">Sign Up</a>
+            <a href="profile.html" class="block py-2 hover:text-gray-300 transition hidden" data-auth-user>Profile</a>
+            <a href="login.html" class="block py-2 hover:text-gray-300 transition" data-auth-guest>Login</a>
+            <a href="signup.html" class="block py-2 hover:text-gray-300 transition" data-auth-guest>Sign Up</a>
+            <button type="button" class="block py-2 hover:text-gray-300 transition hidden" data-auth-user data-logout-button>Logout</button>
         </div>
     </nav>
 
@@ -80,13 +82,27 @@
             <div class="md:w-1/2 mb-8 md:mb-0 animate-fade-in-up">
                 <h2 class="text-4xl md:text-5xl font-bold mb-4 animate-slide-in-left">Transform Your Body at Home</h2>
                 <p class="text-xl mb-6 animate-slide-in-left animation-delay-200">Get fit with our daily workout plans designed for all fitness levels. No gym required!</p>
-                <a href="#workouts" class="inline-block bg-[#06402B] text-white font-bold py-3 px-6 rounded-full hover:bg-[#06402B]/90 transition duration-300 pulse-animation animate-slide-in-left animation-delay-400">
-                    Start Your Journey Today
-                </a>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-slide-in-left animation-delay-400">
+                    <a href="#workouts" class="bg-black/50 border border-[#0c6b48] rounded-lg p-4 hover:bg-[#06402B]/70 transition">
+                        <i class="fas fa-dumbbell text-2xl mb-3 text-white"></i>
+                        <h3 class="font-bold text-lg">Workout</h3>
+                        <p class="text-sm text-gray-300 mt-1">Build today's plan</p>
+                    </a>
+                    <a href="#progress" class="bg-black/50 border border-[#0c6b48] rounded-lg p-4 hover:bg-[#06402B]/70 transition">
+                        <i class="fas fa-chart-line text-2xl mb-3 text-white"></i>
+                        <h3 class="font-bold text-lg">Progress</h3>
+                        <p class="text-sm text-gray-300 mt-1">Track completion</p>
+                    </a>
+                    <a href="profile.html" class="bg-black/50 border border-[#0c6b48] rounded-lg p-4 hover:bg-[#06402B]/70 transition">
+                        <i class="fas fa-user text-2xl mb-3 text-white"></i>
+                        <h3 class="font-bold text-lg">Profile</h3>
+                        <p class="text-sm text-gray-300 mt-1">View your stats</p>
+                    </a>
+                </div>
             </div>
             <div class="md:w-1/2 flex justify-center animate-fade-in-up animation-delay-300">
-                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                     alt="Person working out at home" 
+                <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80" 
+                     alt="Man training with weights in a gym" 
                      class="rounded-lg shadow-2xl max-w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-500">
             </div>
         </div>
@@ -322,11 +338,13 @@
                     <p class="text-gray-300">Your personal fitness companion for home workouts. Transform your body and mind with our comprehensive workout plans.</p>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <h3 class="text-xl font-bold mb-4">Account</h3>
                     <ul class="space-y-2">
                         <li><a href="#home" class="text-gray-300 hover:text-white transition">Home</a></li>
-                        <li><a href="#workouts" class="text-gray-300 hover:text-white transition">Workouts</a></li>
-                        <li><a href="#progress" class="text-gray-300 hover:text-white transition">Progress</a></li>
+                        <li data-auth-user class="hidden"><a href="profile.html" class="text-gray-300 hover:text-white transition">Profile</a></li>
+                        <li data-auth-guest><a href="login.html" class="text-gray-300 hover:text-white transition">Login</a></li>
+                        <li data-auth-guest><a href="signup.html" class="text-gray-300 hover:text-white transition">Sign Up</a></li>
+                        <li data-auth-user class="hidden"><button type="button" class="text-gray-300 hover:text-white transition" data-logout-button>Logout</button></li>
                     </ul>
                 </div>
                 <div>
@@ -349,15 +367,11 @@
         </div>
     </footer>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="js/firebase-config.js" type="module"></script>
-
     <!-- Google Cloud Storage SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@google-cloud/storage"></script>
 
     <!-- Your custom JS files -->
+    <script src="js/auth-ui.js"></script>
     <script src="js/gcs-config.js" type="module"></script>
     <script src="js/storage-service.js" type="module"></script>
     <script src="js/app.js" type="module"></script>

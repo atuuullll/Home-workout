@@ -13,7 +13,7 @@
             <i class="fas fa-dumbbell text-4xl text-white mb-4"></i>
             <h1 class="text-2xl font-bold">Login to Homeworkout</h1>
         </div>
-        <form id="login-form">
+        <form id="loginForm">
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium mb-2">Email</label>
                 <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-black text-white focus:ring-2 focus:ring-white focus:border-white" required>
@@ -34,17 +34,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="js/firebase-config.js" type="module"></script>
-
-    <script>
-        // Simple login logic (replace with actual Firebase auth)
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            // For demo, just redirect to index.html
-            window.location.href = 'index.html';
-        });
-    </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/login.js"></script>
 </body>
 </html>
